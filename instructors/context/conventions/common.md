@@ -153,9 +153,34 @@ Use GitHub-flavored Markdown alerts:
 
 > [!IMPORTANT]
 > Critical information.
+
+> [!WARNING]
+> Urgent information.
+
+> [!CAUTION]
+> Negative consequences.
 ```
 
-- **Do not indent alerts.** GitHub-flavored Markdown alerts (`> [!NOTE]`, etc.) do not render correctly when indented (e.g., inside a list item). If you need an alert inside a list, restructure the content to place the alert at the top indentation level, or use bold text (e.g., **Note:**) as a fallback.
+- **Do not indent alerts.** GitHub-flavored Markdown alerts (`> [!NOTE]`, etc.) do not render correctly when indented (e.g., inside a list item). If you need an alert inside a list, restructure the content to place the alert at the top indentation level, or use a blockquote with a bold label as a fallback:
+
+  ```markdown
+  1. Step text.
+
+     > 🟦 **Note**
+     > Note text.
+
+     > 🟩 **Tip**
+     > Tip text.
+
+     > 🟪 **Important**
+     > Important text.
+
+     > 🟨 **Warning**
+     > Warning text.
+
+     > 🟥 **Caution**
+     > Caution text.
+  ```
 
 ## 4.10. Images
 
