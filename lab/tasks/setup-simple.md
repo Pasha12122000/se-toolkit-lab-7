@@ -157,7 +157,19 @@ Replace **`YOUR_VM_USERNAME`** and **`YOUR_VM_IP`** with your values.
 >
 > **Port conflict (`port is already allocated`).**
 >
-> Make sure you stopped Lab 6 services first (step 1.3). If that doesn't help, [clean up `Docker`](../../wiki/docker.md#clean-up-docker), then run the `docker compose up` command again.
+> First, check what's using the port:
+>
+> ```terminal
+> docker ps
+> ```
+>
+> This shows all running containers and their ports. Look for containers using ports 42001–42004 — they're likely leftover from a previous lab. Stop them:
+>
+> ```terminal
+> docker stop <container-name>
+> ```
+>
+> If that doesn't help, make sure you stopped Lab 6 services (step 1.3), or [clean up `Docker`](../../wiki/docker.md#clean-up-docker) and try again.
 >
 > **Containers exit immediately.**
 >
