@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Any
 
 import httpx
 
@@ -24,18 +25,56 @@ class LmsApiClient:
     async def get_items(self) -> list[dict]:
         return await self._get_json("/items/")
 
+    async def get_learners(self) -> list[dict]:
+        return await self._get_json("/learners/")
+
+    async def get_scores(self, lab: str) -> list[dict]:
+        return await self._get_json("/analytics/scores", params={"lab": lab})
+
     async def get_pass_rates(self, lab: str) -> list[dict]:
         return await self._get_json("/analytics/pass-rates", params={"lab": lab})
 
+    async def get_timeline(self, lab: str) -> list[dict]:
+        return await self._get_json("/analytics/timeline", params={"lab": lab})
+
+    async def get_groups(self, lab: str) -> list[dict]:
+        return await self._get_json("/analytics/groups", params={"lab": lab})
+
+    async def get_top_learners(self, lab: str, limit: int = 10) -> list[dict]:
+        return await self._get_json(
+            "/analytics/top-learners",
+            params={"lab": lab, "limit": str(limit)},
+        )
+
+    async def get_completion_rate(self, lab: str) -> dict:
+        return await self._get_json("/analytics/completion-rate", params={"lab": lab})
+
+    async def trigger_sync(self) -> dict:
+        return await self._post_json("/pipeline/sync", json={})
+
     async def _get_json(
         self, path: str, params: dict[str, str] | None = None
-    ) -> list[dict]:
+    ) -> Any:
+        return await self._request_json("GET", path, params=params)
+
+    async def _post_json(self, path: str, json: dict[str, Any]) -> Any:
+        return await self._request_json("POST", path, json=json)
+
+    async def _request_json(
+        self,
+        method: str,
+        path: str,
+        params: dict[str, str] | None = None,
+        json: dict[str, Any] | None = None,
+    ) -> Any:
         try:
             async with httpx.AsyncClient(timeout=TIMEOUT_SECONDS) as client:
-                response = await client.get(
+                response = await client.request(
+                    method,
                     f"{self._base_url}{path}",
                     headers=self._headers,
                     params=params,
+                    json=json,
                 )
                 response.raise_for_status()
                 return response.json()
