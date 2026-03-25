@@ -11,7 +11,7 @@ from handlers import dispatch_message
 
 async def handle_telegram_message(message: Message) -> None:
     settings = load_settings()
-    response_text = dispatch_message(message.text or "", settings)
+    response_text = await dispatch_message(message.text or "", settings)
     await message.answer(response_text)
 
 
@@ -24,14 +24,16 @@ def build_dispatcher() -> Dispatcher:
 
 async def run_telegram_mode() -> None:
     settings = load_settings()
+    if not settings.bot_token:
+        raise RuntimeError("BOT_TOKEN is required for Telegram mode.")
     bot = Bot(token=settings.bot_token)
     dispatcher = build_dispatcher()
     await dispatcher.start_polling(bot)
 
 
-def run_test_mode(message_text: str) -> int:
+async def run_test_mode(message_text: str) -> int:
     settings = load_settings()
-    response_text = dispatch_message(message_text, settings)
+    response_text = await dispatch_message(message_text, settings)
     print(response_text)
     return 0
 
@@ -45,7 +47,7 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
     if args.test is not None:
-        return run_test_mode(args.test)
+        return asyncio.run(run_test_mode(args.test))
 
     asyncio.run(run_telegram_mode())
     return 0
