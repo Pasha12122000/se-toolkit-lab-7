@@ -1,1 +1,3 @@
-"""Service layer for future backend and LLM integrations."""
+from .lms_api import BackendError, LmsApiClient
+
+__all__ = ["BackendError", "LmsApiClient"]
