@@ -95,3 +95,24 @@ By the end of this lab, you should be able to say:
 ### Optional
 
 1. [Flutter Web Chatbot](./lab/tasks/optional/task-1.md)
+
+## Deploy
+
+To run the full lab on your VM, make sure `.env.docker.secret` contains the backend variables plus the bot variables `BOT_TOKEN`, `LLM_API_KEY`, and `LLM_API_MODEL`. The bot service is configured in Docker to reach the backend at `http://backend:8000` over the internal compose network, while the Qwen proxy is reached at `http://host.docker.internal:42005/v1`. Keep `LMS_API_KEY` the same value you already use for the backend.
+
+Build and start all services on the VM with:
+
+```terminal
+cd ~/se-toolkit-lab-7
+docker compose --env-file .env.docker.secret up --build -d
+docker compose --env-file .env.docker.secret ps
+```
+
+To verify the deployment, first check that the backend docs still respond on `http://localhost:42002/docs`. Then inspect the bot container:
+
+```terminal
+docker compose --env-file .env.docker.secret ps bot
+docker compose --env-file .env.docker.secret logs bot --tail 20
+```
+
+Finally, send `/start`, `/health`, and a natural-language message like `what labs are available?` to the Telegram bot. If `/health` fails only inside the container, double-check that the bot uses `http://backend:8000` instead of `localhost:42002`. If LLM requests fail in Docker, verify that the Qwen proxy is running on the VM and reachable through `host.docker.internal:42005`.
