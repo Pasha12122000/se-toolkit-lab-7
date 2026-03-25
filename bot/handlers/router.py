@@ -1,4 +1,5 @@
 from config import Settings
+from handlers.common import UNKNOWN_COMMAND_TEXT
 from handlers.commands import (
     handle_health,
     handle_help,
@@ -28,4 +29,4 @@ def dispatch_message(message_text: str, settings: Settings) -> str:
         lab = parts[1] if len(parts) > 1 else None
         return handle_scores(settings, lab)
 
-    return "Unknown command. Use /help to see the available commands."
+    return UNKNOWN_COMMAND_TEXT
