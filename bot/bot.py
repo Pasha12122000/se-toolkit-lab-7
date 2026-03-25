@@ -3,22 +3,45 @@ import asyncio
 
 from aiogram import Bot, Dispatcher
 from aiogram.filters import CommandStart
-from aiogram.types import Message
+from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from config import load_settings
 from handlers import dispatch_message
 
 
+def build_main_keyboard() -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text="Health", callback_data="/health"),
+                InlineKeyboardButton(text="Labs", callback_data="/labs"),
+            ],
+            [
+                InlineKeyboardButton(text="Scores Lab 04", callback_data="/scores lab-04"),
+            ],
+        ]
+    )
+
+
 async def handle_telegram_message(message: Message) -> None:
     settings = load_settings()
     response_text = await dispatch_message(message.text or "", settings)
-    await message.answer(response_text)
+    reply_markup = build_main_keyboard() if (message.text or "").strip() in {"/start", "/help"} else None
+    await message.answer(response_text, reply_markup=reply_markup)
+
+
+async def handle_callback_query(callback_query: CallbackQuery) -> None:
+    settings = load_settings()
+    response_text = await dispatch_message(callback_query.data or "", settings)
+    await callback_query.message.answer(response_text, reply_markup=build_main_keyboard())
+    await callback_query.answer()
 
 
 def build_dispatcher() -> Dispatcher:
     dispatcher = Dispatcher()
     dispatcher.message.register(handle_telegram_message, CommandStart())
     dispatcher.message.register(handle_telegram_message)
+    dispatcher.callback_query.register(handle_callback_query)
     return dispatcher
 
 

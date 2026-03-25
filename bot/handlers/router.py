@@ -7,12 +7,19 @@ from handlers.commands import (
     handle_scores,
     handle_start,
 )
+from services import LlmError, LlmRouter
 
 
 async def dispatch_message(message_text: str, settings: Settings) -> str:
     text = message_text.strip()
     if not text:
         return "Please enter a command. Use /help to see the available commands."
+
+    if not text.startswith("/"):
+        try:
+            return await LlmRouter(settings).route(text)
+        except LlmError as exc:
+            return str(exc)
 
     parts = text.split()
     command = parts[0].lower()
