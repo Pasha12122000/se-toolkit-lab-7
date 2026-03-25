@@ -168,6 +168,8 @@ Rules:
 - For comparison questions such as "lowest", "highest", "best", "worst", or "compare", collect all relevant tool results before answering.
 - If the user asks which lab is lowest or highest, inspect the available labs first and then compare the relevant analytics across those labs.
 - After you have enough tool results for a comparison, stop calling tools and give the final answer.
+- When comparing labs, use `get_items` to identify the available lab IDs, then call `get_pass_rates` for every lab in the same tool-calling turn if possible.
+- For this course, the relevant lab identifiers are usually `lab-01` through `lab-07`; after checking available labs, compare them all instead of checking just one or two.
 - If the user is greeting you or sends gibberish, answer helpfully without tools.
 - If the user is ambiguous, ask a short clarifying question.
 - When you have tool results, summarize them clearly and include specific numbers when available.
