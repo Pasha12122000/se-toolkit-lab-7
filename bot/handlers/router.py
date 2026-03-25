@@ -1,0 +1,31 @@
+from config import Settings
+from handlers.commands import (
+    handle_health,
+    handle_help,
+    handle_labs,
+    handle_scores,
+    handle_start,
+)
+
+
+def dispatch_message(message_text: str, settings: Settings) -> str:
+    text = message_text.strip()
+    if not text:
+        return "Please enter a command. Use /help to see the available commands."
+
+    parts = text.split()
+    command = parts[0].lower()
+
+    if command == "/start":
+        return handle_start(settings)
+    if command == "/help":
+        return handle_help(settings)
+    if command == "/health":
+        return handle_health(settings)
+    if command == "/labs":
+        return handle_labs(settings)
+    if command == "/scores":
+        lab = parts[1] if len(parts) > 1 else None
+        return handle_scores(settings, lab)
+
+    return "Unknown command. Use /help to see the available commands."
